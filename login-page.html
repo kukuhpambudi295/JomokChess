@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Dulu Mas</title>
+</head>
+<body>
+    <div class="loginnyaini">
+        <h2>Masuk Akun</h2>
+        <form id="Loginform">
+            <div class="inputgrup">
+                <label for="Username">Username atau id</label> 
+                <input type="text" id="usn" placeholder="Masukkan Username" required>
+            </div>
+
+            <div class="inputgrup">
+                <label for="pw">Kata sandi</label> 
+                <input type="text" id="pw" placeholder="Masukkan Kata Sandi">
+            </div>
+            <button type="submit" class="login">Login Mas</button>
+        </form>
+
+            <div class="footernya">
+                <p>Ga ada akun? <a href="">Bikin Akun Mas</a></p>
+            </div>
+    </div>
+
+    <script>
+        document.getElementById("Loginform").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const username = document.getElementById("usn").value; 
+            const password = document.getElementById("pw").value; 
+            
+            if (username === "kukuh" && password === "123") {
+
+             window.location.href = "jomokchess.html";
+            } else {
+              alert("Username atau password salah kocak!");
+            }
+        });
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body{
+            background-image: url('jomokchess.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh; /* Mengunci tinggi tepat sesuai ukuran layar HP */
+            width: 100vw;  /* Mengunci lebar tepat sesuai ukuran layar HP */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden; /* CRITICAL: Mematikan fungsi scroll atas-bawah & kiri-kanan */
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4); 
+            z-index: 1;
+        }
+
+        .loginnyaini{
+            position: relative;
+            z-index: 2; /* Agar berada di atas overlay */
+            background: rgba(255, 255, 255, 0.15); /* Transparan putih */
+            backdrop-filter: blur(10px); /* Efek blur kaca di belakang form */
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .loginnyaini h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .inputgrup {
+            margin-bottom: 20px;
+        }
+
+        .inputgrup label {
+            display: block;
+            margin-bottom: 8px;
+            color: #f1f5f9;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .inputgrup input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .inputgrup input:focus {
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+        }
+
+        .login {
+            width: 100%;
+            padding: 12px;
+            background-color: #1e293b; /* Warna gelap agar kontras */
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .login:hover {
+            background-color: #0f172a;
+            transform: translateY(-1px);
+        }
+
+        .footernya {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        .footernya a {
+            color: #38bdf8; 
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footernya a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html> 

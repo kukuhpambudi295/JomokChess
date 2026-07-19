@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game Catur Responsive (Laptop & HP)</title>
+    <!-- Meload CSS untuk tampilan papan catur -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2f3542;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        /* Pembungkus papan catur agar ukurannya dinamis */
+        .board-container {
+            width: 90vw;        /* Di HP, lebar papan 90% dari lebar layar */
+            max-width: 500px;   /* Di Laptop, lebar maksimal papan dibatasi 500px agar tidak terlalu besar */
+            aspect-ratio: 1 / 1;/* Memastikan papan selalu berbentuk kotak sempurna */
+            margin: 0 auto;
+        }
+
+        #board {
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .info-panel {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .status-box {
+            background-color: #3e4452;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #ffa502;
+        }
+        
+        button {
+            width: 100%; /* Tombol melebar penuh agar mudah ditekan di HP */
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #2ed573;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            /* Menghilangkan efek highlight abu-abu saat ditekan di HP */
+            -webkit-tap-highlight-color: transparent; 
+        }
+        button:hover {
+            background-color: #26af5f;
+        }
+
+        /* Optimasi khusus untuk layar laptop/desktop (layar besar) */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .info-panel {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Game Catur 2 Pemain</h1>
+    
+    <!-- Wadah Papan Catur yang Responsif -->
+    <div class="board-container">
+        <div id="board"></div>
+    </div>
+
+    <!-- Informasi Status Game -->
+    <div class="info-panel">
+        <div class="status-box">
+            <span>Giliran: <strong id="turn" style="color: #2ed573;">Putih</strong></span>
+            <br>
+            <span class="status" id="status">Permainan sedang berjalan.</span>
+        </div>
+        <button onclick="resetGame()">Mulai Ulang Game</button>
+    </div>
+
+    <!-- Meload jQuery, Chess.js (Logika), dan Chessboard.js (Grafis) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+
+    <script>
+        let board = null;
+        let game = new Chess();
+        
+        const $status = $('#status');
+        const $turn = $('#turn');
+
+        function onDragStart (source, piece, position, orientation) {
+            if (game.game_over()) return false;
+
+            // Hanya izinkan jalan sesuai giliran warna putih (w) atau hitam (b)
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+
+        function onDrop (source, target) {
+            let move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // Otomatis jadi Queen jika pion tembus ke ujung
+            });
+
+            if (move === null) return 'snapback';
+            updateStatus();
+        }
+
+        function onSnapEnd () {
+            board.position(game.fen());
+        }
+
+        function updateStatus () {
+            let status = '';
+            let moveColor = game.turn() === 'b' ? 'Hitam' : 'Putih';
+
+            $turn.text(moveColor);
+            // Ubah warna teks giliran agar lebih menarik
+            $turn.css('color', game.turn() === 'b' ? '#ffffff' : '#2ed573');
+
+            if (game.in_checkmate()) {
+                status = 'Game Over! ' + moveColor + ' terkena Skakmat.';
+            } else if (game.in_draw()) {
+                status = 'Game Over! Hasil Remis (Draw).';
+            } else {
+                status = 'Permainan sedang berjalan.';
+                if (game.in_check()) {
+                    status = 'Awas, Skak! (' + moveColor + ' dalam bahaya)';
+                }
+            }
+
+            $status.text(status);
+        }
+
+        const config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        };
+
+        // Render pertama kali
+        board = Chessboard('board', config);
+        updateStatus();
+
+        // LOGIKA RESPONSIVITAS: Mengatur ulang ukuran papan saat layar HP diputar atau browser laptop di-resize
+        $(window).resize(function() {
+            board.resize();
+        });
+
+        function resetGame() {
+            game.reset();
+            board.start();
+            updateStatus();
+        }
+    </script>
+</body>
+</html>
